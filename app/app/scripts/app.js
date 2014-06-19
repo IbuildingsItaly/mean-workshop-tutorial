@@ -9,6 +9,10 @@ angular
         $httpProvider.interceptors.push('middleware');
 
         $routeProvider
+            .when('/', {
+                templateUrl: 'views/home.html',
+                controller: 'HomeCtrl'
+            })
             .when('/login', {
                 templateUrl: 'views/login.html',
                 controller: 'LoginCtrl'
@@ -24,6 +28,7 @@ angular
                     event.preventDefault();
                     $location.path('/login').replace();
                 }
+                else Session.setHttpHeaders();
             }
         });
     }]);
