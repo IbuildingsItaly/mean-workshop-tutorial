@@ -1,6 +1,6 @@
 angular
     .module('meanApp')
-    .controller('HomeCtrl', ['$scope', '$location', '$http', 'Session', 'Plan', function ($scope, $location, $http, Session, Plan) {
+    .controller('HomeCtrl', ['$scope', '$location', '$http', 'Plan', function ($scope, $location, $http, Plan) {
         $scope.addPlan = function (title) {
             var plan = new Plan({title: title});
 
