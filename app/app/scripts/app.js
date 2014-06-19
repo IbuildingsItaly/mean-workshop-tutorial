@@ -17,6 +17,10 @@ angular
                 templateUrl: 'views/login.html',
                 controller: 'LoginCtrl'
             })
+            .when('/plan/:planId', {
+                templateUrl: 'views/plan.html',
+                controller: 'PlanCtrl'
+            })
             .otherwise({
                 templateUrl: 'views/404.html'
             });
