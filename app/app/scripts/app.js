@@ -21,6 +21,10 @@ angular
                 templateUrl: 'views/plan.html',
                 controller: 'PlanCtrl'
             })
+            .when('/plan/:planId/event/:eventId?', {
+                templateUrl: 'views/event.html',
+                controller: 'EventCtrl'
+            })
             .otherwise({
                 templateUrl: 'views/404.html'
             });
