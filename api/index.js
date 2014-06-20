@@ -1,4 +1,5 @@
 var express = require('express')
+    , db = require('./model/db')
     , bodyParser = require('body-parser')
     , app = express()
     , logger = require("./logger")
@@ -18,6 +19,8 @@ router.use(function (req, res, next) {
     logger.info('%s %s %s', req.method, req.url, req.path);
     next(); //!important
 });
+
+require('./routes/index.js')(router);
 
 app.use(bodyParser());
 
