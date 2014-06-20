@@ -1,6 +1,5 @@
 /**
  * Import all Route
- *
  */
 var userController = require('../controllers/user');
 var planController = require('../controllers/plan');
@@ -44,46 +43,36 @@ module.exports = function (router) {
     // PLAN
     // =============================================================================
     router.route('/plans')
-
         //get All Plans
         .get(planController.index)
-
         //create Plan
         .post(planController.createPlan)
-
+        //Delete All Plans
         .delete(planController.deleteAllplans)
 
     router.route('/plans/:id')
         .get(planController.plan)
-    // update plan By Id
+        // Update Plan
         .put(planController.updatePlan)
-    // Put plan By Id
+        // Delete Plan
         .delete(planController.deletePlan)
 
 
     // EVENT
     // =============================================================================
-    /**
-     /plans/:planId/events GET, POST
-     /plans/:planId/events/:eventId GET, PUT, DELETE
-     */
-
     router.route('/plans/:id/events')
-
         //get All Plans
         .get(eventsController.events)
-
-        //get All Plans
+        //Create Event
         .post(eventsController.createEvent)
-        //create Plan
+        //Delete All Events
         .delete(eventsController.deleteAllEvents)
 
     router.route('/plans/:id/events/:eventId')
-        // update plan By Id
+        //get All Plans
+        .get(eventsController.getEvent)
+        // Update Event
         .put(eventsController.updateEvent)
-        // Put plan By Id
+        // Delete Event
         .delete(eventsController.deleteEvent)
-
-
-
 };

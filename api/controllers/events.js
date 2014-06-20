@@ -5,6 +5,11 @@ var mongoose = require('mongoose')
     , jwt = require('jwt-simple')
     , authorization = require('../config/authorization');
 
+/**
+ * Manage Error
+ * @param err
+ * @returns {string}
+ */
 var getErrorMessage = function (err) {
     var message = '';
     logger.error('err: %s', err);
@@ -44,26 +49,28 @@ var getErrorMessage = function (err) {
 // CREATE
 // =============================================================================
 exports.createEvent = function (req, res) {
+
     var token = req.headers.authorization;
-    var userData = jwt.decode(token, authorization.secret);
+    if (token) {
+        var userData = jwt.decode(token, authorization.secret);
 
-    Plan.findById(req.params.id, 'events', function (err, plan) {
-        if (!err) {
-            plan.events.push(req.body);
-            plan.save(function (err, plan) {
-                if (err) {
-                    logger.error('create events ', err);
-                    return res.send(400, {
-                        message : getErrorMessage(err)
-                    });
-                } else {
-                    console.log('events saved: ' + req.body.title);
-                    res.json(plan.events[plan.events.length-1].toJSON());
-                }
-            });
-        }
-    });
-
+        Plan.findById(req.params.id, 'events', function (err, plan) {
+            if (!err) {
+                plan.events.push(req.body);
+                plan.save(function (err, plan) {
+                    if (err) {
+                        logger.error('create events ', err);
+                        return res.send(400, {
+                            message : getErrorMessage(err)
+                        });
+                    } else {
+                        console.log('events saved: ' + req.body.title);
+                        res.json(plan.events[plan.events.length - 1].toJSON());
+                    }
+                });
+            }
+        });
+    }
 }
 
 
@@ -71,17 +78,37 @@ exports.createEvent = function (req, res) {
 // =============================================================================
 exports.events = function (req, res) {
     var token = req.headers.authorization;
-    var userData = jwt.decode(token, authorization.secret);
-    Plan.find({_id : req.params.id, owner : userData._id}, 'events').sort({createdOn : -1}).exec(function (err, plan) {
-        if (err) {
-            return res.send(400, {
-                message : getErrorMessage(err)
-            });
-        } else {
-            console.log(plan);
-            res.send(200, {events : plan});
-        }
-    });
+    if (token) {
+        var userData = jwt.decode(token, authorization.secret);
+        Plan.find({_id : req.params.id, owner : userData._id}, 'events').sort({createdOn : -1}).exec(function (err, plan) {
+            if (err) {
+                return res.send(400, {
+                    message : getErrorMessage(err)
+                });
+            } else {
+//            console.log(plan);
+                res.send(200, {events : plan});
+            }
+        });
+    }
+};
+
+exports.getEvent = function (req, res) {
+    var token = req.headers.authorization;
+    if (token) {
+        var userData = jwt.decode(token, authorization.secret);
+        Plan.findOne({_id : req.params.id, owner : userData._id}, 'events').sort({createdOn : -1}).exec(function (err, plan) {
+            if (err) {
+                return res.send(400, {
+                    message : getErrorMessage(err)
+                });
+            } else {
+                var thisEvents = plan.events.id(req.params.eventId);
+                console.dir(plan.events[0]);
+                res.json(plan.events[0]);
+            }
+        });
+    }
 };
 
 
@@ -89,48 +116,86 @@ exports.events = function (req, res) {
 // =============================================================================
 exports.updateEvent = function (req, res) {
     var token = req.headers.authorization;
-    var userData = jwt.decode(token, authorization.secret);
-    console.dir(req.params.id);
-    console.dir(userData._id);
-    Plan.findOne({_id : req.params.id, owner : userData._id}, 'events').sort({createdOn : -1}).exec(function (err, plan) {
-        if (err) {
-            return res.send(400, {
-                message : getErrorMessage(err)
-            });
-        } else {
-            var thisEvents = plan.events.id(req.params.eventId);
-            Object.merge(thisEvents, req.body)
-            plan.save(function (err, plan) {
-                if (err) {
-                    logger.error('create events ', err);
-                    return res.send(400, {
-                        message : getErrorMessage(err)
-                    });
-                } else {
-                    console.log('events saved: ' + req.body.title);
-                    console.dir(plan);
-                    res.json(plan.events[0]);
-                }
-            });
-        }
-    });
+    if (token) {
+        var userData = jwt.decode(token, authorization.secret);
+        Plan.findOne({_id : req.params.id, owner : userData._id}, 'events').sort({createdOn : -1}).exec(function (err, plan) {
+            if (err) {
+                return res.send(400, {
+                    message : getErrorMessage(err)
+                });
+            } else {
+                var thisEvents = plan.events.id(req.params.eventId);
+                Object.merge(thisEvents, req.body)
+                plan.save(function (err, plan) {
+                    if (err) {
+                        logger.error('create events ', err);
+                        return res.send(400, {
+                            message : getErrorMessage(err)
+                        });
+                    } else {
+                        console.log('events saved: ' + req.body.title);
+                        console.dir(plan);
+                        res.json(plan.events[0]);
+                    }
+                });
+            }
+        });
+    }
 };
 // DELETE
 // =============================================================================
 
 exports.deleteEvent = function (req, res) {
     var token = req.headers.authorization;
-    var userData = jwt.decode(token, authorization.secret);
+    if (token) {
+        var userData = jwt.decode(token, authorization.secret);
 
-    Plan.findOne({_id : req.params.id, owner : userData._id}, 'events').sort({createdOn : -1}).exec(function (err, plan) {
-        if (err) {
-            return res.send(400, {
-                message : getErrorMessage(err)
-            });
-        } else {
-            if(plan.events.length > 0){
+        Plan.findOne({_id : req.params.id, owner : userData._id}, 'events').sort({createdOn : -1}).exec(function (err, plan) {
+            if (err) {
+                return res.send(400, {
+                    message : getErrorMessage(err)
+                });
+            } else {
+                if (plan.events.length > 0) {
 
-                var thisEvents = plan.events.id(req.params.eventId).remove();
+                    var thisEvents = plan.events.id(req.params.eventId).remove();
+                    plan.save(function (err, plan) {
+                        if (err) {
+                            logger.error('create events ', err);
+                            return res.send(400, {
+                                message : getErrorMessage(err)
+                            });
+                        } else {
+                            console.log('events removed: ' + req.body.title);
+                            res.send(200, {
+                                message : req.body.title + " removed"
+                            });
+                        }
+                    });
+                } else {
+                    res.send(200, {
+                        message : "No Events for this Plan"
+                    });
+                }
+            }
+        });
+    }
+};
+
+
+exports.deleteAllEvents = function (req, res) {
+    var token = req.headers.authorization;
+    if (token) {
+
+        var userData = jwt.decode(token, authorization.secret);
+
+        Plan.findOne({_id : req.params.id, owner : userData._id}, 'events').sort({createdOn : -1}).exec(function (err, plan) {
+            if (err) {
+                return res.send(400, {
+                    message : getErrorMessage(err)
+                });
+            } else {
+                plan.events = [];
                 plan.save(function (err, plan) {
                     if (err) {
                         logger.error('create events ', err);
@@ -144,40 +209,7 @@ exports.deleteEvent = function (req, res) {
                         });
                     }
                 });
-            }else{
-                res.send(200, {
-                    message : "No Events for this Plan"
-                });
             }
-        }
-    });
-};
-
-
-exports.deleteAllEvents = function (req, res) {
-    var token = req.headers.authorization;
-    var userData = jwt.decode(token, authorization.secret);
-
-    Plan.findOne({_id : req.params.id, owner : userData._id}, 'events').sort({createdOn : -1}).exec(function (err, plan) {
-        if (err) {
-            return res.send(400, {
-                message : getErrorMessage(err)
-            });
-        } else {
-            plan.events = [];
-            plan.save(function (err, plan) {
-                if (err) {
-                    logger.error('create events ', err);
-                    return res.send(400, {
-                        message : getErrorMessage(err)
-                    });
-                } else {
-                    console.log('events removed: ' + req.body.title);
-                    res.send(200, {
-                        message : req.body.title + " removed"
-                    });
-                }
-            });
-        }
-    });
+        });
+    }
 };
