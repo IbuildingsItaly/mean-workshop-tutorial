@@ -31,5 +31,11 @@ module.exports = function (router) {
     router.route('/userDestroy')
         .delete(userController.allUsers)
 
+    router.route('/login')
+        .post(userController.login)
+
+    router.route('/logout')
+        .get(userController.logout)
+
 }
 

@@ -2,7 +2,12 @@ var mongoose = require('mongoose')
     , User = mongoose.model('User')
     , logger = require('../logger')
     , sugar = require('sugar')
-;
+    , _ = require('lodash')
+    , jwt = require('jwt-simple')
+    , crypto = require('crypto')
+    , passport = require('../helpers/auth')(User)
+    , authorization = require('../config/authorization');
+
 /**
  * Manage Error Mongoose
  * @param err
@@ -37,6 +42,16 @@ var getErrorMessage = function (err) {
 // =============================================================================
 
 exports.createUser = function (req, res) {
+    var md5sum = crypto.createHash('md5');
+
+    if (req.body.password) {
+        // MD5 of the password 
+        req.body.password = md5sum.update(req.body.password).digest('hex');
+    } else {
+        return res.send(400, {
+            message : 'Some fields are missing'
+        });
+    }
 
     User.create(req.body, function (err, user) {
         if (err) {
@@ -192,3 +207,42 @@ exports.allUsers = function (req, res) {
     )
 }
 
+
+// LOGIN / LOGOUT
+// =============================================================================
+
+exports.login = function (req, res) {
+    passport.authenticate('local', function (err, user, info) {
+        var token;
+
+        if (err) {
+            logger.info(prefix + 'Attempt a login, obtained an error: ' + err.toString());
+            return res
+                .status(400)
+                .json({success : false});
+        }
+
+        if (_.isEmpty(user)) {
+            logger.info('Login failed for user ' + req.body.username);
+            return res
+                .status(200)
+                .json({'status' : 'failure', error : 'AUTH Failed', success : false });
+        }
+
+        //user has authenticated correctly thus we create a JWT token
+        token = jwt.encode(user, authorization.secret, 'HS256');
+        _.extend(user, {token : token, success : true});
+
+        return res
+            .status(200)
+            .json({user : user, token : token, success : true});
+
+    })(req, res);
+}
+
+
+exports.logout = function (req, res) {
+    res.send(200, {
+        message : 'logout user'
+    });
+}

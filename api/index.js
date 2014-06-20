@@ -1,10 +1,13 @@
 var express = require('express')
     , db = require('./model/db')
+    , passport = require('passport')
     , bodyParser = require('body-parser')
     , app = express()
     , logger = require("./logger")
+    , token = require('./middlewares/token')
     , port = process.env.PORT || 12345 // set our port
-    , cors = require('cors');
+    , cors = require('cors')
+    , authorization = require('./config/authorization');
 
 corsOptions = {
     origin: '*',
