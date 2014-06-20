@@ -24,6 +24,7 @@ angular
                     event.preventDefault();
                     $location.path('/login').replace();
                 }
+                else Session.setHttpHeaders();
             }
         });
     }]);
