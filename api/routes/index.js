@@ -15,5 +15,21 @@ module.exports = function (router) {
 
         // get All Users
         .get(userController.getUsers)
+
+
+    router.route('/user/:nome')
+        // get specific User
+        .get(userController.getUser)
+
+        // delete the bear with name
+        .delete(userController.deleteUser)
+
+        // update user with this name
+        .put(userController.updateUser)
+
+    //clears the entire collection
+    router.route('/userDestroy')
+        .delete(userController.allUsers)
+
 }
 

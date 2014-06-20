@@ -35,15 +35,12 @@ var customValidator = [
 //userSchema.path('username').validate(onlyLettersAllow, 'Only Letters');
 
 var userSchema = new mongoose.Schema({
-    username: {type: String,required: true,validate:customValidator,lowercase: true, trim: true},
+    username: {type: String,required: true,validate:customValidator,lowercase: true, trim: true,unique: true},
     password: {type: String,required: true,lowercase: true, trim: true},
-    email: {type: String, required : true, validate: validateEmail },
+    email: {type: String, required : true, validate: validateEmail ,unique: true},
     createdOn: { type: Date, default: Date.now },
     lastLogin: { type: Date, default: Date.now }
 });
-
-//check that username and email are unique
-userSchema.index({ username: 1, email: 1 }, { unique: true });
 
 
 /**
