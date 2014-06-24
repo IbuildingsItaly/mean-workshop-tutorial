@@ -20,7 +20,7 @@ angular
         if ($routeParams.eventId) {
             var event = new Event({planId: $routeParams.planId, eventId: $routeParams.eventId});
 
-            event.$get(function (event) {
+            event.$get(function () {
                 $scope.event = event;
                 $scope.map.center.latitude = event.position.latitude;
                 $scope.map.center.longitude = event.position.longitude;
@@ -43,10 +43,8 @@ angular
 
         $scope.saveEvent = function (event) {
             if (event.eventId) {
-                event.$update(function (event) {
-                    if (event.$resolved) {
-                        $location.path('/plan/' + $scope.planId);
-                    }
+                event.$update(function () {
+                    $location.path('/plan/' + $scope.planId);
                 });
             }
             else {
@@ -54,10 +52,8 @@ angular
 
                 event.planId = $scope.planId;
 
-                event.$save(function (event) {
-                    if (event.$resolved) {
-                        $location.path('/plan/' + $scope.planId);
-                    }
+                event.$save(function () {
+                    $location.path('/plan/' + $scope.planId);
                 });
             }
         };
