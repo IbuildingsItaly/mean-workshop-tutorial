@@ -105,7 +105,7 @@ exports.getEvent = function (req, res) {
             } else {
                 var thisEvents = plan.events.id(req.params.eventId);
                 console.dir(plan.events[0]);
-                res.json(plan.events[0]);
+                res.json(thisEvents);
             }
         });
     }
