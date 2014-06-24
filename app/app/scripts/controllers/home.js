@@ -4,20 +4,16 @@ angular
         $scope.addPlan = function (title) {
             var plan = new Plan({title: title});
 
-            plan.$save(function (plan) {
-                if (plan.$resolved) {
-                    $location.path('/plan/' + plan.id);
-                }
+            plan.$save(function () {
+                $location.path('/plan/' + plan.id);
             });
         };
 
         $scope.removePlan = function (planId) {
             var plan = new Plan({id: planId});
 
-            plan.$delete(function (plan) {
-                if (plan.$resolved) {
-                    delete $scope.plans[planId];
-                }
+            plan.$delete(function () {
+                delete $scope.plans[planId];
             });
         };
 
