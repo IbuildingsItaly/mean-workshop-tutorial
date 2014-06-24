@@ -1,0 +1,22 @@
+<div>
+    <form name="homeForm" ng-submit="addPlan(planName)">
+        <div class="form-group">
+            <label class="label-control">Plan name</label>
+            <input type="text" ng-model="planName" placeholder="A cool name" required>
+            <button class="btn btn-default" type="submit" ng-disabled="homeForm.$invalid">Add a plan</button>
+        </div>
+    </form>
+
+    <h1>Plans</h1>
+    <hr>
+    <table class="table table-striped">
+        <tr>
+            <th>Name</th>
+            <th></th>
+        </tr>
+        <tr ng-repeat="plan in plans">
+            <td><a href="#/plan/{{plan.id}}">{{plan.title}}</a></td>
+            <td><a class="btn btn-default" ng-click="removePlan(plan.id)"><span class="glyphicon glyphicon-remove"></span></a></td>
+        </tr>
+    </table>
+</div>

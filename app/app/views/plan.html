@@ -1,0 +1,25 @@
+<div>
+    <a class="btn btn-default" href="#/">Back to home</a>
+    <a class="btn btn-default" href="#/plan/{{plan.id}}/event">Add a new event</a>
+
+    <h1>Events</h1>
+    <hr>
+    <table class="table table-striped">
+        <tr>
+            <th>Date</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Time</th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr ng-repeat="event in plan.events">
+            <td>{{event.date}}</td>
+            <td>{{event.title}}</td>
+            <td>{{event.description}}</td>
+            <td>{{event.time}}</td>
+            <td><a class="btn btn-default" href="#/plan/{{plan.id}}/event/{{event.id}}"><span class="glyphicon glyphicon-pencil"></span></a></td>
+            <td><a class="btn btn-default" ng-click="removeEvent(event.id)"><span class="glyphicon glyphicon-remove"></span></a></td>
+        </tr>
+    </table>
+</div>
